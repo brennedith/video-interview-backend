@@ -5,6 +5,11 @@ const { ObjectId } = Schema.Types;
 
 const videoSchema = new Schema(
   {
+    key: {
+      type: String,
+      unique: true,
+      required: true
+    },
     account: {
       type: ObjectId,
       ref: 'Account',
