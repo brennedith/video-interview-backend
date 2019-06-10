@@ -1,9 +1,25 @@
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const auth = require('./auth');
+
 const app = express();
+
+app.use(
+  session({
+    secret: process.env.SECRET,
+    cookie: {
+      maxAge: 60 * 60 * 1000 // 1 Hour
+    },
+    resave: true,
+    saveUninitialized: false
+  })
+);
+app.use(auth.initialize());
+app.use(auth.session());
 
 app.use(logger('dev'));
 app.use(express.json());
