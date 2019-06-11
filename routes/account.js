@@ -47,10 +47,11 @@ router.get('/:slug', (req, res, next) => {
 
   Account.findOne({ slug })
     .then(account => {
-      const { name, duration } = account;
+      const { name, text, duration } = account;
 
       res.status(200).json({
         name,
+        text,
         duration
       });
     })
