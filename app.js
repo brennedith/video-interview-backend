@@ -30,5 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/video', require('./routes/video'));
 app.use('/api/account', require('./routes/account'));
+app.get('*', (req, res, next) =>
+  res.sendFile(path.join(__dirname + '/public/index.html'))
+);
 
 module.exports = app;
