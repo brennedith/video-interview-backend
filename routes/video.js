@@ -1,28 +1,36 @@
 const express = require('express');
+const multer = require('multer');
+var path = require('path');
+const ftp = require('ftp');
 
 const router = express.Router();
+const upload = multer({ dest: 'uploads/' });
 
 // CREATE
-router.post('/', (req, res, next) => {
-  res.send('api');
-});
+router.post('/', upload.single('video'), (req, res, next) => {
+  const ftpClient = new ftp();
 
-// READ
-router.get('/', (req, res, next) => {
-  res.send('api');
-});
-router.get('/:id', (req, res, next) => {
-  res.send('api');
-});
+  const { host, user, password } = req.body;
 
-// UPDATE
-router.patch('/:id', (req, res, next) => {
-  res.send('api');
-});
+  const fileLocation = path.resolve(path.join(__dirname, '../', req.file.path));
+  const fileName = req.file.filename;
 
-// DELETE
-router.delete('/:id', (req, res, next) => {
-  res.send('api');
+  ftpClient.on('ready', () => {
+    ftpClient.put(fileLocation, fileName, err => {
+      if (err) return res.status(500).json({ message: err.message });
+
+      res.status(200).json({ message: 'OK' });
+      ftpClient.logout(() => {});
+    });
+  });
+
+  ftpClient.connect({
+    host,
+    user,
+    password,
+    port: 21,
+    secure: false
+  });
 });
 
 module.exports = router;
