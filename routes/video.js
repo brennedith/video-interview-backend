@@ -1,19 +1,18 @@
 const express = require('express');
 const multer = require('multer');
-var path = require('path');
 const ftp = require('ftp');
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: '/tmp' });
 
 // CREATE
 router.post('/', upload.single('video'), (req, res, next) => {
   const ftpClient = new ftp();
 
-  const { host, user, password } = req.body;
+  const { accountKey, host, user, password } = req.body;
 
-  const fileLocation = path.resolve(path.join(__dirname, '../', req.file.path));
-  const fileName = req.file.filename;
+  const fileLocation = req.file.path;
+  const fileName = `${accountKey}.mp4`;
 
   ftpClient.on('ready', () => {
     ftpClient.put(fileLocation, fileName, err => {
